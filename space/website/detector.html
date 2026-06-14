@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceClean — Real-Time Space Junk Detection</title>
+    <meta name="description" content="AI-powered camera-based space debris detection using TensorFlow.js computer vision">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>">
+    <!-- TensorFlow.js + COCO-SSD Model -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+</head>
+<body class="detector-page">
+    <!-- Navigation -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon"><i class="fas fa-satellite"></i></div>
+                    <span class="logo-text">SPACECLEAN</span>
+                </a>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="detector.html" class="active">Detector</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Detector Interface -->
+    <section class="detector-container">
+        <div class="container">
+            <div class="detector-header">
+                <h1 class="detector-title gradient-text-blue">Real-Time Space Junk Detection</h1>
+                <p class="detector-subtitle">Point your camera at space debris imagery — AI detects objects in real-time</p>
+            </div>
+
+            <div class="detector-layout">
+                <!-- Camera Feed -->
+                <div class="camera-section">
+                    <div class="camera-container" id="cameraBox">
+                        <video id="cameraFeed" autoplay playsinline muted></video>
+                        <canvas id="detectionCanvas"></canvas>
+
+                        <div class="camera-overlay">
+                            <div class="corner tl"></div>
+                            <div class="corner tr"></div>
+                            <div class="corner bl"></div>
+                            <div class="corner br"></div>
+                            <div class="scanning-line" id="scanLine"></div>
+                        </div>
+
+                        <div class="camera-status" id="cameraStatus">
+                            <span class="status-dot"></span>
+                            <span id="statusText">Initializing...</span>
+                        </div>
+
+                        <div class="fps-counter" id="fpsCounter">0 FPS</div>
+
+                        <div class="loading-overlay" id="loadingOverlay">
+                            <div class="spinner"></div>
+                            <p id="loadingText">Loading AI Model...</p>
+                        </div>
+                    </div>
+
+                    <div class="camera-controls">
+                        <button id="startBtn" class="btn btn-primary" disabled>
+                            <i class="fas fa-play"></i> Start Detection
+                        </button>
+                        <button id="stopBtn" class="btn btn-secondary" disabled>
+                            <i class="fas fa-stop"></i> Stop
+                        </button>
+                        <button id="captureBtn" class="btn btn-accent" disabled>
+                            <i class="fas fa-camera"></i> Capture
+                        </button>
+                        <button id="switchBtn" class="btn btn-secondary">
+                            <i class="fas fa-sync-alt"></i> Switch Camera
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Analytics Panel -->
+                <div class="analytics-panel">
+                    <div class="panel-section">
+                        <h3>Detection Stats</h3>
+                        <div class="stat-item">
+                            <label>Objects Detected</label>
+                            <div class="stat-value" id="objectCount">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <label>Avg Confidence</label>
+                            <div class="stat-value" id="confidence">0%</div>
+                        </div>
+                        <div class="stat-item">
+                            <label>Total Detections</label>
+                            <div class="stat-value" id="totalDetections">0</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3>Detected Objects</h3>
+                        <div id="detectionList" class="detection-list">
+                            <p class="empty-state">Start detection to identify space junk</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3>Threat Level</h3>
+                        <div class="threat-gauge">
+                            <div id="threatBar" class="threat-bar" style="width: 0%"></div>
+                        </div>
+                        <p id="threatText" class="threat-text" style="color: var(--success);">🟢 SAFE</p>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3>Settings</h3>
+                        <label class="setting-item">
+                            <input type="checkbox" id="showBoxes" checked>
+                            <span>Show Bounding Boxes</span>
+                        </label>
+                        <label class="setting-item">
+                            <span>Confidence Threshold</span>
+                        </label>
+                        <label class="setting-item">
+                            <input type="range" id="sensitivity" min="20" max="90" value="50">
+                            <span><span id="sensitivityValue">50</span>%</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How to Use -->
+            <section class="info-section">
+                <h2 class="gradient-text-blue">How to Use</h2>
+                <div class="steps-grid">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h4>Allow Camera</h4>
+                        <p>Grant browser permission to access your webcam</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h4>Show Space Junk</h4>
+                        <p>Play a space debris video on your phone and point it at the camera</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h4>Start Detection</h4>
+                        <p>Click "Start Detection" — AI model analyzes each frame</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <h4>View Results</h4>
+                        <p>See detected objects, threat levels, and capture screenshots</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 SpaceClean Detection | Real-time AI-Powered Space Debris Analysis</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="detector.js"></script>
+</body>
+</html>

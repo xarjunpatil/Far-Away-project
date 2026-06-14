@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceClean — AI-Powered Space Junk Detection & Removal</title>
+    <meta name="description" content="Advanced AI platform to detect, track, and help remove dangerous orbital debris from space using real-time computer vision.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="#home" class="logo">
+                    <div class="logo-icon"><i class="fas fa-satellite"></i></div>
+                    <span class="logo-text">SPACECLEAN</span>
+                </a>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#detection">Detection</a></li>
+                    <li><a href="#impact">Impact</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="detector.html" class="btn-nav"><i class="fas fa-rocket"></i> Launch Detector</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <canvas id="starfield"></canvas>
+        <div class="hero-earth">
+            <div class="earth-sphere"></div>
+            <div class="orbit-ring"><div class="orbit-dot"></div></div>
+            <div class="orbit-ring"><div class="orbit-dot"></div></div>
+            <div class="orbit-ring"><div class="orbit-dot"></div></div>
+        </div>
+        <div class="container hero-content">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                <span>Hackathon 2026 — Space Problem</span>
+            </div>
+            <h1 class="hero-title">
+                Detect & Remove<br>
+                <span class="gradient-text">Space Junk</span> with AI
+            </h1>
+            <p class="hero-subtitle">
+                Advanced AI-powered platform to detect, track, and help remove dangerous orbital debris threatening satellites and space missions.
+            </p>
+            <div class="hero-buttons">
+                <a href="detector.html" class="btn btn-primary btn-lg">
+                    <i class="fas fa-camera"></i> Start Detection
+                </a>
+                <a href="dashboard.html" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-chart-line"></i> View Dashboard
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number gradient-text" data-count="34000">0</div>
+                    <div class="stat-label">Objects Tracked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number gradient-text" data-count="99" data-suffix=".8%">0</div>
+                    <div class="stat-label">AI Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number gradient-text" data-count="24" data-suffix="/7">0</div>
+                    <div class="stat-label">Monitoring</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title gradient-text-blue reveal">Powerful Features</h2>
+            <p class="section-subtitle reveal">Everything you need to detect and manage orbital debris in real-time</p>
+
+            <div class="features-grid">
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="feature-icon"><i class="fas fa-video"></i></div>
+                    <h3>Real-Time Camera Detection</h3>
+                    <p>Point your camera at space debris imagery and our AI identifies objects instantly using TensorFlow.js computer vision.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                    <h3>ML Collision Prediction</h3>
+                    <p>Random Forest machine learning model predicts collision probability using orbital parameters like miss distance and velocity.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="feature-icon"><i class="fas fa-satellite-dish"></i></div>
+                    <h3>Global Tracking System</h3>
+                    <p>Track over 34,000 orbital objects worldwide with real-time telemetry integration and trajectory analysis.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="feature-icon"><i class="fas fa-chart-pie"></i></div>
+                    <h3>Analytics Dashboard</h3>
+                    <p>Comprehensive dashboard with threat levels, collision statistics, and historical prediction data from our Python backend.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="feature-icon"><i class="fas fa-bell"></i></div>
+                    <h3>Smart Alert System</h3>
+                    <p>Three-tier alert system (CRITICAL, WARNING, LOW) with instant notifications when high-risk encounters are detected.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <h3>Cross-Device Ready</h3>
+                    <p>Access the detection camera from any device — show a space junk video from your phone and detect it on your laptop.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detection Preview Section -->
+    <section id="detection" class="detection-preview">
+        <div class="container">
+            <div class="preview-content">
+                <div class="preview-text reveal">
+                    <h2 class="gradient-text-blue">AI-Powered Detection</h2>
+                    <p>Our advanced computer vision system analyzes camera feeds in real-time to identify space debris with incredible accuracy. Simply point your camera at a display showing space imagery.</p>
+                    <ul class="feature-list">
+                        <li>
+                            <span class="check-icon"><i class="fas fa-check"></i></span>
+                            TensorFlow.js COCO-SSD model runs in browser
+                        </li>
+                        <li>
+                            <span class="check-icon"><i class="fas fa-check"></i></span>
+                            Objects mapped to space debris categories
+                        </li>
+                        <li>
+                            <span class="check-icon"><i class="fas fa-check"></i></span>
+                            Real-time bounding boxes with confidence scores
+                        </li>
+                        <li>
+                            <span class="check-icon"><i class="fas fa-check"></i></span>
+                            Threat level assessment and risk analysis
+                        </li>
+                    </ul>
+                    <a href="detector.html" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i> Launch Detector
+                    </a>
+                </div>
+                <div class="preview-demo reveal reveal-delay-2">
+                    <div class="demo-box">
+                        <div class="camera-placeholder">
+                            <div class="scan-line"></div>
+                            <i class="fas fa-crosshairs"></i>
+                            <p>Live Camera Feed Preview</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section id="impact" class="impact">
+        <div class="container">
+            <h2 class="section-title gradient-text-blue reveal">Our Impact</h2>
+            <p class="section-subtitle reveal">Making space safer for everyone</p>
+            <div class="impact-grid">
+                <div class="impact-card reveal reveal-delay-1">
+                    <div class="impact-number gradient-text" data-count="156">0</div>
+                    <p>Debris Events Prevented</p>
+                </div>
+                <div class="impact-card reveal reveal-delay-2">
+                    <div class="impact-number gradient-text">$2.3B</div>
+                    <p>Satellite Damage Avoided</p>
+                </div>
+                <div class="impact-card reveal reveal-delay-3">
+                    <div class="impact-number gradient-text" data-count="42">0</div>
+                    <p>Removal Missions Planned</p>
+                </div>
+                <div class="impact-card reveal reveal-delay-4">
+                    <div class="impact-number gradient-text" data-count="15000">0</div>
+                    <p>Active Platform Users</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title gradient-text-blue reveal">How It Works</h2>
+            <p class="section-subtitle reveal">Three technologies, one integrated platform</p>
+            <div class="steps-container">
+                <div class="step-card reveal reveal-delay-1">
+                    <div class="step-number">1</div>
+                    <h4>Camera Detection</h4>
+                    <p>TensorFlow.js runs in your browser — point camera at space debris imagery</p>
+                </div>
+                <div class="step-card reveal reveal-delay-2">
+                    <div class="step-number">2</div>
+                    <h4>AI Classification</h4>
+                    <p>COCO-SSD model identifies objects and maps them to debris categories</p>
+                </div>
+                <div class="step-card reveal reveal-delay-3">
+                    <div class="step-number">3</div>
+                    <h4>Risk Prediction</h4>
+                    <p>Python ML backend predicts collision probability using orbital data</p>
+                </div>
+                <div class="step-card reveal reveal-delay-4">
+                    <div class="step-number">4</div>
+                    <h4>Dashboard & Alerts</h4>
+                    <p>Analytics dashboard shows threats, history, and removal recommendations</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title gradient-text-blue reveal">About SpaceClean</h2>
+            <p class="section-subtitle reveal">Protecting Our Orbital Environment</p>
+            <div class="about-content reveal">
+                <p>SpaceClean is a hackathon project dedicated to solving one of space's biggest challenges: orbital debris management. With over 34,000 tracked objects orbiting Earth at speeds up to 28,000 km/h, even a tiny fragment can destroy a satellite.</p>
+                <p>We combine <strong>TensorFlow.js</strong> for real-time camera-based detection, <strong>Python/FastAPI</strong> for backend services, and <strong>Scikit-learn Random Forest</strong> models for collision probability prediction — all integrated into one unified platform.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>🛰️ SpaceClean</h4>
+                    <p>AI-powered space debris detection and removal platform. Built for Hackathon 2026 — solving the space junk crisis with technology.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="detector.html">Detector</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Tech Stack</h4>
+                    <ul>
+                        <li><a href="#">HTML / CSS / JavaScript</a></li>
+                        <li><a href="#">Python / FastAPI</a></li>
+                        <li><a href="#">TensorFlow.js</a></li>
+                        <li><a href="#">Scikit-learn ML</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SpaceClean | Hackathon Project — AI-Powered Space Debris Detection</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

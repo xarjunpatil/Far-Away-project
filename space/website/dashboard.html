@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceClean — Analytics Dashboard</title>
+    <meta name="description" content="Space debris collision risk analytics and ML-powered predictions dashboard">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>">
+</head>
+<body class="dashboard-page">
+    <!-- Navigation -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon"><i class="fas fa-satellite"></i></div>
+                    <span class="logo-text">SPACECLEAN</span>
+                </a>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="detector.html">Detector</a></li>
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard -->
+    <section class="dashboard-container">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1 class="gradient-text-blue">Mission Control Dashboard</h1>
+                <div class="backend-status offline" id="backendStatus">
+                    <span class="status-dot"></span>
+                    <span id="backendStatusText">Connecting...</span>
+                </div>
+            </div>
+
+            <!-- Metric Cards -->
+            <div class="dashboard-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Total Predictions</div>
+                    <div class="metric-value primary" id="metricTotal">—</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Critical Alerts</div>
+                    <div class="metric-value danger" id="metricCritical">—</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Camera Detections</div>
+                    <div class="metric-value warning" id="metricCamera">—</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Avg Collision Prob</div>
+                    <div class="metric-value success" id="metricAvgProb">—</div>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Body -->
+            <div class="dashboard-body">
+                <!-- Collision Risk Prediction Form -->
+                <div class="dash-card">
+                    <h3><i class="fas fa-flask"></i> &nbsp;Collision Risk Prediction</h3>
+                    <form class="predict-form" id="predictForm">
+                        <div class="form-group">
+                            <label>Miss Distance (km)</label>
+                            <input type="number" id="missDistance" placeholder="e.g. 5.2" step="0.01" value="5.2" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Relative Velocity (km/s)</label>
+                            <input type="number" id="relVelocity" placeholder="e.g. 7.8" step="0.01" value="7.8" required>
+                        </div>
+                        <div class="form-group">
+                            <label>B-Star Drag</label>
+                            <input type="number" id="bstarDrag" placeholder="e.g. 0.0001" step="0.00001" value="0.0001" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Position Covariance</label>
+                            <input type="number" id="posCovariance" placeholder="e.g. 25.0" step="0.01" value="25.0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Combined Mass (kg)</label>
+                            <input type="number" id="combinedMass" placeholder="e.g. 1500" step="1" value="1500" required>
+                        </div>
+                        <div class="form-group form-submit">
+                            <button type="submit" class="btn btn-primary" id="predictBtn">
+                                <i class="fas fa-bolt"></i> Predict Risk
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="prediction-result" id="predictionResult">
+                        <div class="result-row">
+                            <span class="result-label">Collision Probability</span>
+                            <span class="result-value gradient-text" id="resultProb">—</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Alert Level</span>
+                            <span class="alert-badge" id="resultAlert">—</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Prediction ID</span>
+                            <span class="result-value" id="resultId" style="color: var(--text-secondary);">—</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Timestamp</span>
+                            <span class="result-value" id="resultTime" style="color: var(--text-secondary); font-size: 0.85rem;">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prediction History -->
+                <div class="dash-card">
+                    <h3><i class="fas fa-history"></i> &nbsp;Prediction History</h3>
+                    <div class="history-list" id="historyList">
+                        <p class="empty-state" id="historyEmpty">No predictions yet. Use the form to make a prediction, or start the backend server.</p>
+                    </div>
+                </div>
+
+                <!-- Alert Distribution -->
+                <div class="dash-card full-width">
+                    <h3><i class="fas fa-chart-bar"></i> &nbsp;Alert Distribution</h3>
+                    <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap; margin-top: 1rem;">
+                        <div style="flex: 1; min-width: 300px;">
+                            <div id="alertChart" style="display: flex; align-items: flex-end; gap: 1.5rem; height: 180px; padding: 0 1rem;">
+                                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                                    <div id="barCritical" style="width: 100%; background: linear-gradient(180deg, var(--danger), rgba(255,23,68,0.3)); border-radius: 8px 8px 0 0; min-height: 10px; transition: height 0.5s ease;" data-height="0"></div>
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Critical</span>
+                                </div>
+                                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                                    <div id="barWarning" style="width: 100%; background: linear-gradient(180deg, var(--warning), rgba(255,171,0,0.3)); border-radius: 8px 8px 0 0; min-height: 10px; transition: height 0.5s ease;" data-height="0"></div>
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Warning</span>
+                                </div>
+                                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                                    <div id="barLow" style="width: 100%; background: linear-gradient(180deg, var(--success), rgba(0,230,118,0.3)); border-radius: 8px 8px 0 0; min-height: 10px; transition: height 0.5s ease;" data-height="0"></div>
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Low</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem; min-width: 200px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="width: 12px; height: 12px; background: var(--danger); border-radius: 3px;"></span>
+                                <span style="color: var(--text-secondary); font-size: 0.9rem;">Critical: <strong id="legendCritical" style="color: var(--danger);">0</strong></span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="width: 12px; height: 12px; background: var(--warning); border-radius: 3px;"></span>
+                                <span style="color: var(--text-secondary); font-size: 0.9rem;">Warning: <strong id="legendWarning" style="color: var(--warning);">0</strong></span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="width: 12px; height: 12px; background: var(--success); border-radius: 3px;"></span>
+                                <span style="color: var(--text-secondary); font-size: 0.9rem;">Low: <strong id="legendLow" style="color: var(--success);">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 SpaceClean | Mission Control Dashboard — Connected to Python/FastAPI Backend</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    /* ═══════════════════════════════════════════════════════
+       Dashboard JavaScript — Connects to FastAPI Backend
+       ═══════════════════════════════════════════════════════ */
+
+    const API_BASE = ''; // Use relative paths for deployment
+
+    // DOM refs
+    const metricTotal = document.getElementById('metricTotal');
+    const metricCritical = document.getElementById('metricCritical');
+    const metricCamera = document.getElementById('metricCamera');
+    const metricAvgProb = document.getElementById('metricAvgProb');
+    const backendStatus = document.getElementById('backendStatus');
+    const backendStatusText = document.getElementById('backendStatusText');
+    const predictForm = document.getElementById('predictForm');
+    const predictionResult = document.getElementById('predictionResult');
+    const historyList = document.getElementById('historyList');
+    const historyEmpty = document.getElementById('historyEmpty');
+
+    // ── Init ──
+    document.addEventListener('DOMContentLoaded', () => {
+        checkBackendHealth();
+        fetchStatistics();
+        fetchHistory();
+
+        // Hamburger
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        if (hamburger && navLinks) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navLinks.classList.toggle('show');
+            });
+        }
+
+        // Predict form
+        predictForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await submitPrediction();
+        });
+
+        // Auto-refresh every 10s
+        setInterval(() => {
+            fetchStatistics();
+            fetchHistory();
+        }, 10000);
+    });
+
+    // ── Check Backend Health ──
+    async function checkBackendHealth() {
+        try {
+            const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(3000) });
+            if (res.ok) {
+                const data = await res.json();
+                backendStatus.className = 'backend-status online';
+                backendStatusText.textContent = `Backend Online (${data.uptime_seconds}s uptime)`;
+            } else {
+                throw new Error('Unhealthy');
+            }
+        } catch {
+            backendStatus.className = 'backend-status offline';
+            backendStatusText.textContent = 'Backend Offline — Start server with: python app.py';
+        }
+    }
+
+    // ── Fetch Statistics ──
+    async function fetchStatistics() {
+        try {
+            const res = await fetch(`${API_BASE}/statistics`, { signal: AbortSignal.timeout(3000) });
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+
+            metricTotal.textContent = data.total_predictions;
+            metricCritical.textContent = data.critical_alerts;
+            metricCamera.textContent = data.total_camera_detections || 0;
+            metricAvgProb.textContent = data.average_collision_probability.toFixed(1) + '%';
+
+            // Update chart
+            updateChart(data.critical_alerts, data.warning_alerts,
+                data.total_predictions - data.critical_alerts - data.warning_alerts);
+        } catch {
+            metricTotal.textContent = '—';
+            metricCritical.textContent = '—';
+            metricWarnings.textContent = '—';
+            metricAvgProb.textContent = '—';
+        }
+    }
+
+    // ── Submit Prediction ──
+    async function submitPrediction() {
+        const predictBtn = document.getElementById('predictBtn');
+        predictBtn.disabled = true;
+        predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Predicting...';
+
+        try {
+            const payload = {
+                miss_distance_km: parseFloat(document.getElementById('missDistance').value),
+                relative_velocity_kms: parseFloat(document.getElementById('relVelocity').value),
+                bstar_drag: parseFloat(document.getElementById('bstarDrag').value),
+                position_covariance: parseFloat(document.getElementById('posCovariance').value),
+                combined_mass_kg: parseFloat(document.getElementById('combinedMass').value)
+            };
+
+            const res = await fetch(`${API_BASE}/predict_risk`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) throw new Error('Prediction failed');
+            const data = await res.json();
+
+            // Show result
+            predictionResult.classList.add('show');
+            document.getElementById('resultProb').textContent = data.collision_probability_percentage.toFixed(2) + '%';
+
+            const alertEl = document.getElementById('resultAlert');
+            alertEl.textContent = data.alert_level;
+            alertEl.className = 'alert-badge ' + data.alert_level.toLowerCase();
+
+            document.getElementById('resultId').textContent = '#' + data.prediction_id;
+            document.getElementById('resultTime').textContent = new Date(data.timestamp).toLocaleString();
+
+            // Refresh data
+            fetchStatistics();
+            fetchHistory();
+            checkBackendHealth();
+        } catch (err) {
+            alert('❌ Prediction failed. Make sure the backend is running:\n\npython app.py');
+        } finally {
+            predictBtn.disabled = false;
+            predictBtn.innerHTML = '<i class="fas fa-bolt"></i> Predict Risk';
+        }
+    }
+
+    // ── Fetch History ──
+    async function fetchHistory() {
+        try {
+            const res = await fetch(`${API_BASE}/history?limit=20`, { signal: AbortSignal.timeout(3000) });
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+
+            if (data.length === 0) {
+                historyList.innerHTML = '<p class="empty-state">No predictions yet</p>';
+                return;
+            }
+
+            historyList.innerHTML = data.map(item => {
+                const alertClass = item.alert_level === 'CRITICAL' ? 'danger' :
+                                   item.alert_level === 'WARNING' ? 'warning' : 'success';
+                const prob = (item.collision_probability_percentage || item.collision_probability || 0).toFixed(1);
+                const time = new Date(item.timestamp).toLocaleTimeString();
+
+                return `
+                    <div class="history-item">
+                        <span class="history-id">#${item.prediction_id || item.id}</span>
+                        <span class="history-time">${time}</span>
+                        <span class="history-prob" style="color: var(--${alertClass});">${prob}%</span>
+                        <span class="alert-badge ${item.alert_level.toLowerCase()}">${item.alert_level}</span>
+                    </div>
+                `;
+            }).join('');
+        } catch {
+            // Keep existing content
+        }
+    }
+
+    // ── Update Bar Chart ──
+    function updateChart(critical, warning, low) {
+        const max = Math.max(critical, warning, low, 1);
+
+        const barCritical = document.getElementById('barCritical');
+        const barWarning = document.getElementById('barWarning');
+        const barLow = document.getElementById('barLow');
+
+        barCritical.style.height = Math.max((critical / max) * 150, 10) + 'px';
+        barWarning.style.height = Math.max((warning / max) * 150, 10) + 'px';
+        barLow.style.height = Math.max((low / max) * 150, 10) + 'px';
+
+        document.getElementById('legendCritical').textContent = critical;
+        document.getElementById('legendWarning').textContent = warning;
+        document.getElementById('legendLow').textContent = low;
+    }
+    </script>
+</body>
+</html>
